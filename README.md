@@ -30,3 +30,5 @@
 # Check if category already exist or not start from  line : 117 to line : 131
 # If category already exist in wordpress set to post at line : 135
 # If category not found in wordpress insert into wordpress from line : 139 to line 148 and set new category to post at line : 151  
+
+# Code is validated from Sonar Qube https://www.sonarqube.org/ 
