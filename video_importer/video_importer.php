@@ -122,4 +122,53 @@ function add_video_taxonomies() {
 
 add_action( 'init', 'add_video_taxonomies', 0 );
 
+// SHORT CODE FOR DISPLAYING VIDEOS ON PAGE
+function get_imported_video( ) {
+	$paged 		= (get_query_var('paged')) ? get_query_var('paged') : 1;
+	$args 		= array( 
+		'posts_per_page' 	=> 8, 
+		'paged' 			=> $paged,
+		'post_type' 		=> 'videos',
+		'post_status' 	 	=> 'publish',
+		'order' 		 	=> 'ASC',
+	);
+
+		// GETTING ALL VIDEOS
+		$postslist = new WP_Query( $args );
+
+		if ( $postslist->have_posts() ) :
+			while ( $postslist->have_posts() ) : $postslist->the_post(); 
+			if(isset(get_the_title())) {
+				$title = get_the_title();
+			} else {
+				$title = "The Title";
+			} ?>
+				<iframe class="video-frame" src="https://www.youtube.com/embed/<?php echo get_the_excerpt(); ?>" frameborder="0" allowfullscreen title="project_frame"><?php echo $title ?></iframe> 
+			<?php endwhile; ?>
+
+			<div class="row">
+				<p class="next-button">
+					<?php next_posts_link( 'Older Videos', $postslist->max_num_pages ); ?> 
+				</p>
+				<p class="previous-button">
+					<?php previous_posts_link( 'Next Videos &raquo;' );  ?>
+				</p>
+			</div>
+
+			<!-- CUSTOM STYLING FOR SHORT CODE -->
+			<style type=text/css>
+				.next-button {
+					float: left;
+					text-decoration: none;
+				}
+				.previous-button {
+					float: right;
+					text-decoration: none;
+				}
+			</style>
+		<?php wp_reset_postdata();
+	endif;
+}
+
+add_shortcode( 'get_videos', 'get_imported_video' );
 ?>
