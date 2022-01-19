@@ -168,4 +168,62 @@
         });
     });
     // VIDEO SEARCH CALL END
+
+    // SELECT ALL VIDEOS
+    $(document).on( 'click', '#select-all', function () {
+        // CHECK ALL VIDEO'S
+        if($(this).is(':checked')) {
+            $('.video-checkbox').prop('checked', true);
+        } else {
+            $('.video-checkbox').prop('checked', false);
+        }
+    }); 
+
+    // IMPORT VIDEO'S CALL START
+    $(document).on('click', '#import-videos', function (e) {
+        e.preventDefault();
+
+        var api_key = $('#api-key').val();
+        var video_ids = [];
+
+        $('.video-checkbox').each(function () {
+            // GET SELECTED VIDEO'S ID'S
+            if($(this).is(':checked')) {
+                video_ids.push($(this).val());
+            }
+        });
+
+        if (video_ids.length) {
+            // GENERATE AJAX CALL
+            var url = "<?='../wp-content/plugins/video_importer/import_videos.php';?>";
+            $.ajax({
+                url: url,
+                method: "POST",
+                data: {id : video_ids, api_key: api_key},
+                dataType: "json",
+                success: function (response) { // SUCCESS REPONSE
+                    if(response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success...',
+                            text: 'Videos Import Successfully!',
+                        });
+                    } else if(response.error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Videos Already Exist!',
+                        });
+                    }
+                }
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'No Video Selected!',
+            });
+        }
+    });
+    // IMPORT VIDEOS CALL END
 </script>
