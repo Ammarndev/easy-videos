@@ -86,3 +86,86 @@
         </div>
   </div>
 </form>
+
+<!-- VIDEOS DISPLAY AREA  -->
+<form action="import_videos.php" method="post">  
+    <div class="youtube-channel-videos">
+    </div>
+</form>
+
+<script>
+    // Auto Call Function On page load
+    showDiv();
+
+    // Set divs on select option
+    function showDiv(value) {
+        if (value == 1) { 
+            document.getElementById("channel-div").style.display = "block";
+            document.getElementById("user-div").style.display = "none";
+        } else if(value == 2) {
+            document.getElementById("user-div").style.display = "block";
+            document.getElementById("channel-div").style.display = "none";
+        } else {
+            document.getElementById("user-div").style.display = "none";
+            document.getElementById("channel-div").style.display = "none";
+        }
+    }
+
+    // VIDEO SEARCH CALL START
+    $(document).delegate("#search-video", "click", function(e) {
+        e.preventDefault();
+
+        // GET FORM DATA
+        var formData = $('#video-search-form').serializeArray();
+
+        // GENERATE AJAX CALL
+        var url = "<?='../wp-content/plugins/video_importer/videos.php';?>";
+        $.ajax({
+            url: url,
+            method: "POST",
+            data: formData,
+            dataType: "json",
+            success: function (response) { // SUCCESS REPONSE
+                // SET VIDEO SECTION AREA
+                $('.youtube-channel-videos').html('');
+
+                // CHECK RESPONSE
+                if (response.result) {
+                    var items = response.result.items;
+                    var str = '';
+                    var i = 0;
+
+                    // CHECKBOX FOR SELECT ALL VIDEOS
+                    str += '<label for="select-all">Select All</label> <input id="select-all" name="select-all" type="checkbox">';
+                    
+                    // PUSH VIDEOS TO VIDEOS DISPLAY AREA
+                    items.map(item => {
+                        var id = item.id.videoId;
+                        str += '<div class="youtube-channel-video-embed vid-' + id + ' video-' + i++ + '"> <div class="col-3 float-left"> <input type="checkbox" class="video-checkbox" name="video-id[]" value='+ id +'> <iframe style="width:100%" src="https://www.youtube.com/embed/' + id + '" frameborder="0" allowfullscreen>' + item.snippet.title + '</iframe> </div></div>';
+                    });
+
+                    str += '<br> <br> <div class="text-center"><button class="btn btn-primary" id="import-videos">IMPORT VIDEOS</button> </div>';
+
+                    if(str) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success...',
+                            text: 'Searching Complete!',
+                        });
+
+                        // VIDEO DISPLAY AREA
+                        $('.youtube-channel-videos').html(str);
+                    }
+
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'No Video Found!',
+                    });
+                }
+            }
+        });
+    });
+    // VIDEO SEARCH CALL END
+</script>
