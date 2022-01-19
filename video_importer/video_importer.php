@@ -34,6 +34,7 @@ function video_page() {
     include( plugin_dir_path( __FILE__ ) . 'welcome.php');
 }
 
+
 // Register Custom Post Type
 function videos_post_type() {
 
@@ -91,4 +92,34 @@ function videos_post_type() {
 }
 
 add_action( 'init', 'videos_post_type', 0 );
+
+// CUSTOM TAXONOMY REGISTRATION
+function add_video_taxonomies() {
+
+	register_taxonomy('vid_cat', ['videos'], [
+		'label' => __('Video Categories', 'txtdomain'),
+		'hierarchical' => true,
+		'rewrite' => ['slug' => 'vid_cat'],
+		'show_admin_column' => true,
+		'show_in_rest' => true,
+		'labels' => [
+			'singular_name' => __('Video', 'txtdomain'),
+			'all_items' => __('All Video Categories', 'txtdomain'),
+			'edit_item' => __('Edit Video', 'txtdomain'),
+			'view_item' => __('View Video', 'txtdomain'),
+			'update_item' => __('Update Video', 'txtdomain'),
+			'add_new_item' => __('Add New Video', 'txtdomain'),
+			'new_item_name' => __('New Video Name', 'txtdomain'),
+			'search_items' => __('Search Video Categories', 'txtdomain'),
+			'parent_item' => __('Parent Video', 'txtdomain'),
+			'parent_item_colon' => __('Parent Video:', 'txtdomain'),
+			'not_found' => __('No Video Categories found', 'txtdomain'),
+		]
+	]);
+
+	register_taxonomy_for_object_type('vid_cat', 'videos');
+}
+
+add_action( 'init', 'add_video_taxonomies', 0 );
+
 ?>
